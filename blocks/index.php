@@ -2,7 +2,9 @@
 set_include_path("../:.:/usr/share/php");
 include "init.php";
 
-var_dump($BLOCKS[1]->title);
+foreach($BLOCKS as $block) {
+	echo $block->creator;
+}
 
 ?>
 <?php include "end.php";?>

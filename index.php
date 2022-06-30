@@ -16,14 +16,7 @@ if (isset($_REQUEST["mapId"])) {
 
 else {
 	echo "
-<h1>Bienvenue sur MyMap!</h1>
-<div id='mapsdiv'>
-<h3>Mes cartes : </h3>";
-	foreach($MAPS as $map) {
-			echo "<a href='./?mapId={$map['id']}'>{$map['name']}</a><br>";
-	}
-echo "</div>";
-	echo "<a href='./editor' style='bottom:0;position:fixed'>Éditeur de blocks</a>";
+<h1>Bienvenue sur MyMap!</h1>";
 }
 
 ?>

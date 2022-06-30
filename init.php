@@ -14,7 +14,12 @@ include "blocksinfo.php";
 		<style>
 
 main {
-	position : relative;
+	position : fixed;
+	top : 120px;
+	bottom : 0;
+	right : 0;
+	left : 0;
+	margin : 30px;
 }
 
 header {
@@ -23,13 +28,13 @@ header {
 	right : 0;
 	left : 0;
 	width : 100%;
-	height : 50px;
+	height : 70px;
 	background : linear-gradient(0deg, rgba(128,103,0,1) 0%, rgba(255,206,0,1) 25%);
 	padding : 25px;
 	display : flex;
-	align-items : center;
 	justify-content: center;
 	margin : auto;
+	z-index : 100;
 }
 
 header a {
@@ -41,8 +46,12 @@ header a {
 	font-weight : bold;
 	font-size : 20px;
 	border-radius : 10px;
-	border : 1px solid white;
+	text-align : middle;
 	transition : 0.25s all ease-out;
+}
+
+header > a {
+	border : 1px solid white;
 }
 
 header a:hover {
@@ -53,8 +62,8 @@ header a:hover {
 header img {
 	position : absolute;
 	display : block;
-	width : 100px;
-	height : 100px;
+	width : 120px;
+	height : 120px;
 	top : 0px;
 	left : 0px;
 	transition : 0.2s all ease-out;
@@ -62,24 +71,50 @@ header img {
 }
 
 header img:hover {
-	width : 120px;
-	height : 120px;
+	width : 150px;
+	height : 150px;
 	top : -10px;
 	left : -10px;
 	transition : 0.2s all ease-in;
+}
+
+header ul {
+	background : #ffcf03;
+	padding : 10px;
+	margin : 5px;
+	color : black;
+	font-weight : bold;
+	font-size : 20px;
+	border-radius : 10px;
+	border : 1px solid white;
+	height : 38px;
+	transition : 0.25s all ease-out;
+	overflow : hidden;
+}
+
+header ul:hover {
+	height : 100px;
+}
+
+header ul li {
+	background : #ffcf03;
+	margin-bottom : 15px;
+}
+
+header ul li a {
+	position : relative;
+	display:inline-block;
+	padding : 0;
+	margin : 0;
+	width : 100%;
 }
 
 header * {
 	flex-shrink : 0;
 }
 
-main {
-	position : fixed;
-	top : 100px;
-	bottom : 0;
-	right : 0;
-	left : 0;
-	width : 100%;
+header > * {
+	width : 250px;
 }
 
 table.mapedit {
@@ -116,8 +151,8 @@ table.mapedit tr td {
 
 #mainmapzone{
 	position : absolute;
-	top : 0px;
-	left : 0px;
+	top : -30px;
+	left : -30px;
 	display: block;
 }
 
@@ -154,6 +189,9 @@ i.fa {
 			<a href="<?php echo $CONF["pathname"]; ?>/create"><i class="fa fa-plus"></i>Nouvelle carte</a>
 			<a href="<?php echo $CONF["pathname"]; ?>/blocks"><i class="fa fa-cubes"></i>Mes blocs</a>
 			<a href="<?php echo $CONF["pathname"]; ?>/maps"><i class="fa fa-map"></i>Mes cartes</a>
-			<a href="<?php echo $CONF["pathname"]."/"; ?>"><i class="fa fa-user"></i>Se connecter</a>
+			<ul href="<?php echo $CONF["pathname"]."/"; ?>">
+				<li><a href="<?php echo $CONF["pathname"]; ?>/signin"><i class="fa fa-user"></i>Se connecter</a></li>
+				<li><a href="<?php echo $CONF["pathname"]; ?>/signup"><i class="fa fa-user-plus"></i>Créer un compte</a></li>
+			</ul>
 		</header>
 		<main>

@@ -1,11 +1,11 @@
 <canvas
 	id="mainmapzone"
-	mapcolumns="<?php echo $map['mapcols']?>"
-	mapobjsize="<?php echo $map['objsize']?>"
-	mapspeed="<?php echo $map['deplaspeed']?>"
-	map="<?php echo $map['map-data'].str_repeat("0",strlen($map['map-data'])%$map['mapcols']?($map['mapcols']-strlen($map['map-data'])%$map['mapcols']):0)?>"
-	mapposx="<?php echo $map['departblockx']*$map['objsize']?>"
-	mapposy="<?php echo $map['departblocky']*$map['objsize']?>"
+	mapcolumns="<?php echo $map->mapcols?>"
+	mapobjsize="<?php echo $map->objsize?>"
+	mapspeed="<?php echo $map->deplaspeed?>"
+	map="<?php echo $map->mapdata.str_repeat("0",strlen($map->mapdata)%$map->mapcols?($map->mapcols-strlen($map->mapdata)%$map->mapcols):0)?>"
+	mapposx="<?php echo $map->departblockx*$map->objsize?>"
+	mapposy="<?php echo $map->departblocky*$map->objsize?>"
 	width="100%"></canvas>
 <script>
 
@@ -141,8 +141,8 @@ function coordToScreen(x,y) {
 }
 
 function showMap() {
-	canvas.width = canvas.parentElement.clientWidth;
-	canvas.height = canvas.parentElement.clientHeight;
+	canvas.width = canvas.parentElement.offsetWidth+60;
+	canvas.height = canvas.parentElement.offsetHeight+60;
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for (var i=0;i*mapsize<=canvas.height+mapsize;i++) {

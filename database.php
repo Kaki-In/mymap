@@ -31,6 +31,30 @@ function sendrequest($request, $getresult) {
 	}
 }
 
+class SqlObject {
+	private $id;
+	private $database;
+
+	function __construct($id, $database) {
+		$this->id=$id;
+		$this->database=$database;
+	}
+
+	function getId() {
+		return $this->id;
+	}
+
+	function __get($attr) {
+		try {return sendrequest("select `$attr` from `".$this->database."` where id=".json_encode($this->id).";", true)[0][$attr];}
+		catch ( Exception $exc ) {}
+	}
+
+	function __set($attr, $value) {
+		return sendrequest("update `".$this->database."` set `$attr`=".json_encode($value)." where id=".$this->id.";", false);
+	}
+
+};
+
 function createBlock() {
 	$r=sendrequest("INSERT INTO `blocks` (`data`) values ('".str_repeat('!', 256)."');", false);
 	return end(sendrequest("SELECT * FROM `blocks`;", true))["id"];
