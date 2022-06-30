@@ -149,7 +149,7 @@ i.fa {
 		<header>
 			<img src="/favicon-256x256.png" onclick="document.location.href='<?php echo $CONF["pathname"]; ?>'"></img>
 			<a href="<?php echo $CONF["pathname"]; ?>/create"><i class="fa fa-plus"></i>Nouvelle carte</a>
-			<a href="<?php echo $CONF["pathname"]; ?>/create"><i class="fa fa-plus"></i>Mes blocs</a>
-			<a href="<?php echo $CONF["pathname"]; ?>/create"><i class="fa fa-plus"></i>Mes cartes</a>
+			<a href="<?php echo $CONF["pathname"]; ?>/blocks"><i class="fa fa-plus"></i>Mes blocs</a>
+			<a href="<?php echo $CONF["pathname"]; ?>/maps"><i class="fa fa-plus"></i>Mes cartes</a>
 		</header>
 		<main>
