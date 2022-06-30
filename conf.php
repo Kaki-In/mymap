@@ -3,7 +3,7 @@
 $CONF = [
 	'database-host'=>'localhost',
 	'database-username'=>'root',
-	'database-password'=>'password',
+	'database-password'=>'Caribou!33',
 	'database-name'=>'mymap',
 
 	'pathname'=>'/games/mymap',
