@@ -1,4 +1,3 @@
-<div id="mainzone" map="0123"></div>
 <canvas
 	id="mainmapzone"
 	mapcolumns="<?php echo $map['mapcols']?>"
@@ -69,7 +68,7 @@ class Block {
 		this.#colnum = colnum;
 		this.#background = background;
 		var base_image = new Image();
-		base_image.src = './imagesapi/imagecreator.php?dims='+mapsize+'&blockid='+parseInt(id);
+		base_image.src = '<?php echo $CONF["pathname"]; ?>/imagesapi/imagecreator.php?dims='+mapsize+'&blockid='+parseInt(id);
 		this.#image=base_image;
 		this.#walkable = iswalkable;
 		this.#load=false;
@@ -127,7 +126,6 @@ function getObjectAt(x,y){
 	if (x<0 || y<0 || x>=mapcols){return undefined;}
 	if (map.length>x+y*mapcols) {
 		return BLOCKS[map[x+y*mapcols]];
-		console.log(map[x+y*mapcols]);
 	}
 	return undefined;
 }
@@ -143,8 +141,8 @@ function coordToScreen(x,y) {
 }
 
 function showMap() {
-	canvas.width = document.documentElement.clientWidth;
-	canvas.height = document.documentElement.clientHeight;
+	canvas.width = canvas.parentElement.clientWidth;
+	canvas.height = canvas.parentElement.clientHeight;
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for (var i=0;i*mapsize<=canvas.height+mapsize;i++) {
@@ -173,7 +171,6 @@ function mainMvmnt() {
 			}
 		}
 		else {
-			console.log(getObjectAt(s1[0], s1[1]) && getObjectAt(s2[0], s2[1]));
 			posx=Math.floor(posx/mapsize)*mapsize;
 		}
 	}

@@ -3,8 +3,11 @@
 include "conf.php";
 include "database.php";
 include "mapsinfo.php";
+include "userinfo.php";
+include "blocksinfo.php";
 
 ?>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8"/>
@@ -149,7 +152,8 @@ i.fa {
 		<header>
 			<img src="/favicon-256x256.png" onclick="document.location.href='<?php echo $CONF["pathname"]; ?>'"></img>
 			<a href="<?php echo $CONF["pathname"]; ?>/create"><i class="fa fa-plus"></i>Nouvelle carte</a>
-			<a href="<?php echo $CONF["pathname"]; ?>/blocks"><i class="fa fa-plus"></i>Mes blocs</a>
-			<a href="<?php echo $CONF["pathname"]; ?>/maps"><i class="fa fa-plus"></i>Mes cartes</a>
+			<a href="<?php echo $CONF["pathname"]; ?>/blocks"><i class="fa fa-cubes"></i>Mes blocs</a>
+			<a href="<?php echo $CONF["pathname"]; ?>/maps"><i class="fa fa-map"></i>Mes cartes</a>
+			<a href="<?php echo $CONF["pathname"]."/"; ?>"><i class="fa fa-user"></i>Se connecter</a>
 		</header>
 		<main>
