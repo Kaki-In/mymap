@@ -18,5 +18,6 @@ To configure the area, open the `conf.php` project and modify the different valu
  - `database-server` : the server that hosts your database (default `localhost`)
  - `database-user` : the username of your database (default `root`)
  - `database-password` : the password of your database
+ - `pathname` : the path from your site root to the directory that contains the maps area (ex : `"/games/mymap"`)
 
 ## Results
