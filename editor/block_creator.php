@@ -8,7 +8,7 @@
 			<label>On peut marcher dessus : </label><input type="checkbox" onclick="actualiseBlockInfo();" id="walkbox" <?php if($block["canbewalked"]) {echo "checked";};?>/>
 		</div>
 		<button onclick="save()">Sauvegarder le block</button>
-		<table id="maintable" class="mapedit" onclick="pencilDown=!pencilDown;actualiseText();" onmouseleave="pencilDown = false;actualiseText();">
+		<table id="maintable" class="blockedit" onclick="pencilDown=!pencilDown;actualiseText();" onmouseleave="pencilDown = false;actualiseText();">
 		</table>
 		<p id="infotext">Le mode balayage est désactivé</p>
 		<canvas id="mainmapzone4" width="200px" height="200px">Prévisualisation indisponible</canvas>
@@ -146,18 +146,6 @@ var mainblock = new Block(<?php echo $block['id']?>, <?php echo $block['cols']?>
 
 requestAnimationFrame(actualiseBlockInfo);
 
-function callScript(scriptname, scriptrequests, onload) {
-	var script = new XMLHttpRequest();
-	var formData = new FormData();
-	for (var i=0;i<Object.keys(scriptrequests).length;i++) {
-		formData.append(Object.keys(scriptrequests)[i], scriptrequests[Object.keys(scriptrequests)[i]]);
-	}
-	script.open("POST", "./actions/"+scriptname+".php", true);
-	script.send(formData);
-	script.overrideMimeType("text/plain; charset=x-user-defined");
-	script.onload = onload;
-}
-
 function save() {
 	actualiseBlockInfo;
 	callScript("save", {"saveblock":mainblock.id, "blockdata":mainblock.data, "blockcols":mainblock.colnum, "blockback":mainblock.background, "blockcanbewalked":mainblock.walkable?1:0, "blocktitle":document.getElementById("blocktitle").value}, onSaveReturn);
@@ -179,4 +167,3 @@ function onSaveReturn() {
 }
 
 		</script>
-	<a href='./' style='bottom:0;position:fixed'>Retour</a>

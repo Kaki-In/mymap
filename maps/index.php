@@ -11,12 +11,14 @@ if (isset($_REQUEST["mapid"])) {
 		}
 	}
 	if ($f) {
+		echo "<div class='mainzonefulldiv'>";
 		include "mapzone.php";
+		echo "</div>";
 	} else {
-		echo "<p>Carte non trouvée!</p>< href='./'>Retour</a>";
+		echo "<main><p>Carte non trouvée!</p>< href='./'>Retour</a>";
 	}
 } else {
-	echo "<div id='mapsdiv'>
+	echo "<main><div id='mapsdiv'>
 <h1>Mes cartes</h1>
 <ul class='maplist'>";
 	foreach ($MAPS as $map) {

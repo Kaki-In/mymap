@@ -15,8 +15,16 @@ if (!isset($_COOKIE["id"])) {
 	addUser();
 }
 
-$USER = [
-	"id"=>$_COOKIE["id"]
+$_ = sendrequest("SELECT `id` from `users`", true);
+
+$USERS=[];
+foreach($_ as $user) {
+	$USERS[$user["id"]]=new SqlObject($user["id"], "users");
+}
+
+$USERINFO = [
+	'id'=>$_COOKIE["id"],
+	'user'=>$USERS[$_COOKIE["id"]]
 ];
 
 ?>

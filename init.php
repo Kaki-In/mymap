@@ -1,10 +1,11 @@
 <?php
 
-include "conf.php";
-include "database.php";
-include "mapsinfo.php";
-include "userinfo.php";
-include "blocksinfo.php";
+if (!isset($CONF)) {include "conf.php";}
+if (!isset($DATABASESTATUS)) {include "database.php";}
+if (!isset($MAPS)) {include "mapsinfo.php";}
+if (!isset($USERS)) {include "userinfo.php";}
+if (!isset($BLOCKS)) {include "blocksinfo.php";}
+if (!isset($ACCOUNTS)) {include "accountinfo.php";}
 
 ?>
 <!DOCTYPE html>
@@ -19,7 +20,8 @@ main {
 	bottom : 0;
 	right : 0;
 	left : 0;
-	margin : 30px;
+	overflow-y : auto;
+	overflow-wrap: break-word;
 }
 
 header {
@@ -80,25 +82,40 @@ header img:hover {
 
 header ul {
 	background : #ffcf03;
-	padding : 10px;
 	margin : 5px;
+	padding : 0;
 	color : black;
 	font-weight : bold;
 	font-size : 20px;
 	border-radius : 10px;
 	border : 1px solid white;
-	height : 38px;
+	height : 58px;
 	transition : 0.25s all ease-out;
 	overflow : hidden;
+	list-style : none;
 }
 
 header ul:hover {
-	height : 100px;
+	height : 120px;
+}
+
+header ul li:not(first-child) {
+	padding-bottom : 10px;
 }
 
 header ul li {
 	background : #ffcf03;
-	margin-bottom : 15px;
+	padding-top : 10px;
+	padding-left : 10px;
+	transition : 0.25s all ease-out;
+}
+
+header ul li:hover {
+	background : #bf9b02;
+}
+
+header ul li:hover a {
+	background : #bf9b02;
 }
 
 header ul li a {
@@ -127,14 +144,14 @@ table.mapedit {
 	padding : 1px;
 }
 
-table.mapedit tr {
+table.blockedit tr {
 	display : flex;
 	flex-direction : row;
 	justify-content: space-evenly;
 	flex-grow: 1;
 }
 
-table.mapedit tr td {
+table.blockedit tr td {
 	background: var(--back);
 	margin : 1px;
 	flex-grow: 1;
@@ -149,15 +166,87 @@ table.mapedit tr td {
 	left : 0px;
 }
 
+.mainzonefulldiv {
+	position : fixed;
+	width : 100%;
+	top : 120px;
+	left : 0px;
+	bottom : 0px;
+}
+
 #mainmapzone{
 	position : absolute;
-	top : -30px;
-	left : -30px;
+	top : 0px;
+	left : 0px;
+	width : 100%;
 	display: block;
 }
 
 i.fa {
 	margin : 10px;
+}
+
+input[type="text"], input[type="password"], input:not([type]) {
+	border : 1px solid #ffcf03;
+	background : white;
+	outline : none;
+	padding : 10px;
+	border-radius : 10px;
+	display : block;
+}
+
+input[type="submit"], button {
+	border : 1px solid #ffcf03;
+	background : #ffcf03;
+	outline : none;
+	padding : 20px;
+	border-radius : 10px;
+	display : block;
+	transition : 0.25s all ease-out;
+	cursor : pointer;
+	text-transform : uppercase;
+	font-weight : bold;
+}
+
+input[type="submit"]:hover, button:hover {
+	background : #bf9b02;
+}
+
+#connectdiv {
+	background : #ffcf03;
+	padding : 20px;
+	margin-top : 70px;
+	text-align : center;
+}
+
+#connectdiv div {
+	display : inline-block;
+	background : white;
+	padding : 20px;
+	border-radius : 20px;
+	width : 20%;
+}
+
+#connectdiv div button {
+	width : 100%;
+	margin-top : 20px;
+}
+
+#connectdiv div input {
+	box-sizing:border-box;
+	display : block;
+	width : 100%;
+	margin-top : 5px;
+	margin-bottom : 10px;
+}
+
+#connectdiv div label {
+	display:inline-block;
+}
+
+#connectdiv div h3 {
+	display : block;
+	margin-top : 20px;
 }
 
 		</style>
@@ -182,6 +271,21 @@ i.fa {
 		<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 		<meta name="theme-color" content="#ffcf03">
 		<script src="https://kit.fontawesome.com/d5396126f5.js" crossorigin="anonymous"></script>
+		<script>
+
+function callScript(scriptname, scriptrequests, onload) {
+	var script = new XMLHttpRequest();
+	var formData = new FormData();
+	for (var i=0;i<Object.keys(scriptrequests).length;i++) {
+		formData.append(Object.keys(scriptrequests)[i], scriptrequests[Object.keys(scriptrequests)[i]]);
+	}
+	script.open("POST", "./actions/"+scriptname+".php", true);
+	script.send(formData);
+	script.overrideMimeType("text/plain; charset=x-user-defined");
+	script.onload = onload;
+}
+
+		</script>
 	</head>
 	<body>
 		<header>
@@ -194,4 +298,3 @@ i.fa {
 				<li><a href="<?php echo $CONF["pathname"]; ?>/signup"><i class="fa fa-user-plus"></i>Créer un compte</a></li>
 			</ul>
 		</header>
-		<main>

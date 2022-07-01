@@ -1,4 +1,5 @@
 <?php include "init.php"?>
+<main>
 
 <?php
 if (isset($_REQUEST["mapId"])) {
