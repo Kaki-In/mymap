@@ -57,7 +57,6 @@ header > a {
 }
 
 header a:hover {
-	text-decoration : None;
 	background : #bf9b02;
 }
 
@@ -167,6 +166,7 @@ table.blockedit tr td {
 }
 
 .mainzonefulldiv {
+	background : black;
 	position : fixed;
 	width : 100%;
 	top : 120px;
@@ -184,6 +184,19 @@ table.blockedit tr td {
 
 i.fa {
 	margin : 10px;
+}
+
+i.fa.fa-spinner {
+        animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+a {
+	color : #7f6701;
 }
 
 input[type="text"], input[type="password"], input:not([type]) {
@@ -208,7 +221,13 @@ input[type="submit"], button {
 	font-weight : bold;
 }
 
-input[type="submit"]:hover, button:hover {
+input[type="submit"].disabled, button.disabled {
+	border : 1px solid #ccc;
+	background : #ccc;
+	pointer-events : none;
+}
+
+input[type="submit"]:not(.disabled):hover, button:not(.disabled):hover {
 	background : #bf9b02;
 }
 
@@ -225,11 +244,13 @@ input[type="submit"]:hover, button:hover {
 	padding : 20px;
 	border-radius : 20px;
 	width : 20%;
+	min-width : 350px;
 }
 
 #connectdiv div button {
 	width : 100%;
 	margin-top : 20px;
+	height : 75px;
 }
 
 #connectdiv div input {
@@ -240,14 +261,54 @@ input[type="submit"]:hover, button:hover {
 	margin-bottom : 10px;
 }
 
+#connectdiv div p {
+	display : block;
+	margin-bottom : 20px;
+}
+
 #connectdiv div label {
 	display:inline-block;
+	text-align : left;
+	font-weight : bold;
+	width : 100%;
 }
 
 #connectdiv div h3 {
 	display : block;
 	margin-top : 20px;
+	margin-bottom : 0px;
+	font-size : 30px;
 }
+
+#connectdiv button:not(.loading) i.fa.fa-spinner {
+        display : none;
+}
+
+#maintable {
+	position : relative;
+	width : 500px;
+	height : 500px;
+	display : flex;
+	flex-direction : column;
+	border : 1px solid black;
+	background : var(--back);
+}
+
+#maintable tr {
+	display : flex;
+	flex-direction : row;
+}
+
+#maintable td {
+	border : 1px solid black;
+	margin : 0px;
+	padding : 0px;
+}
+
+.errorinfo {
+	color : red;
+}
+
 
 		</style>
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
@@ -285,16 +346,58 @@ function callScript(scriptname, scriptrequests, onload) {
 	script.onload = onload;
 }
 
+function signin() {
+	document.getElementById("signinbtn").classList.add("loading");
+	document.getElementById("signinbtn").classList.add("disabled");
+	callScript("signin", {login:document.getElementById("connectlogin").value, password:document.getElementById("connectpassword").value}, signedin);
+}
+
+function signedin() {
+	request=this;
+	console.log(request.response);
+	code = parseInt(request.response.substring(0, 3));
+	info = unescape(request.response.substring(3));
+	if (request.status==500) {
+		document.getElementById("connecterror").textContent="Une erreur s'est produite. Si le problème persiste, réessayez plus tard.";
+		document.getElementById("signinbtn").classList.remove("loading");
+		document.getElementById("signinbtn").classList.remove("disabled");
+	}
+	else if (code==200) {
+		document.location.href="<?php echo $CONF["pathname"]; ?>/";
+	}
+	else if (code==403) {
+		document.getElementById("connecterror").textContent="Nom d'utilisateur ou mot de passe incorrect";
+		document.getElementById("signinbtn").classList.remove("loading");
+		document.getElementById("signinbtn").classList.remove("disabled");
+	}
+	else if (code==500) {
+		document.getElementById("connecterror").textContent="Une erreur s'est produite. Veuillez rafraichir la page, si le problème persiste, réessayez plus tard.";
+		document.getElementById("signinbtn").classList.remove("loading");
+	}
+	else if (code==501) {
+		document.getElementById("connecterror").textContent="Le site n'est pas encore prêt à accueillir de nouvelles connexions";
+		document.getElementById("signinbtn").classList.remove("loading");
+	}
+}
+
 		</script>
 	</head>
 	<body>
 		<header>
 			<img src="/favicon-256x256.png" onclick="document.location.href='<?php echo $CONF["pathname"]; ?>'"></img>
-			<a href="<?php echo $CONF["pathname"]; ?>/create"><i class="fa fa-plus"></i>Nouvelle carte</a>
-			<a href="<?php echo $CONF["pathname"]; ?>/blocks"><i class="fa fa-cubes"></i>Mes blocs</a>
-			<a href="<?php echo $CONF["pathname"]; ?>/maps"><i class="fa fa-map"></i>Mes cartes</a>
-			<ul href="<?php echo $CONF["pathname"]."/"; ?>">
-				<li><a href="<?php echo $CONF["pathname"]; ?>/signin"><i class="fa fa-user"></i>Se connecter</a></li>
-				<li><a href="<?php echo $CONF["pathname"]; ?>/signup"><i class="fa fa-user-plus"></i>Créer un compte</a></li>
-			</ul>
-		</header>
+<?php
+
+if (is_null($USERINFO["user"]->account)) {
+	echo "<a href='{$CONF["pathname"]}/signin'><i class='fa fa-user'></i>Se connecter</a>
+	<a href='{$CONF["pathname"]}/signup'><i class='fa fa-user'></i>Créer un compte</a>";
+} else {
+	echo "
+<a href='{$CONF["pathname"]}/create'><i class='fa fa-plus'></i>Nouvelle carte</a>
+<a href='{$CONF["pathname"]}/blocks'><i class='fa fa-cubes'></i>Mes blocs</a>
+<a href='{$CONF["pathname"]}/maps'><i class='fa fa-map'></i>Mes cartes</a>
+<ul>
+	<li><a href='{$CONF["pathname"]}/account'><i class='fa fa-user'></i>".$ACCOUNTS[$USERINFO["user"]->account]->login."</a></li>
+	<li><a href='{$CONF["pathname"]}/'><i class='fa fa-user'></i>".""."</a></li>
+</ul>";
+}
+?>		</header>

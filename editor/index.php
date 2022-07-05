@@ -26,6 +26,9 @@ if (isset($_REQUEST['blockid'])) {
 	$block=["id"=>(int)$id, "data"=>str_repeat('!', 256), "cols"=>16, "back"=>"#008800", "canbewalked"=>true, "title"=>"NewBlock"];
 	include 'block_creator.php';
 } else {
+	foreach($BLOCKS as $block) {
+		echo "<br><a href='./?blockid=".$block->id."'>".$block->title."</a>";
+	}
 	echo "<br><a href='./?newblock'>Créer un nouveau block</a>";
 	echo "<a href='../' style='bottom:0;position:fixed'>Retour</a>";
 }

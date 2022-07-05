@@ -1,5 +1,7 @@
 <?php
 
+if (!isset($CONF)) {include "conf.php";}
+
 $DATABASESTATUS = [
 	'DatabaseAvailable'=>true,
 	'DatabaseError'=>null,
@@ -50,7 +52,9 @@ class SqlObject {
 	}
 
 	function __set($attr, $value) {
-		return sendrequest("update `".$this->database."` set `$attr`=".json_encode($value)." where id=".$this->id.";", false);
+		var_dump($attr);
+		var_dump($value);
+		return sendrequest("update `".$this->database."` set `$attr`=".json_encode($value)." where id=".json_encode($this->id).";", false);
 	}
 
 };

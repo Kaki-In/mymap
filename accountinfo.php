@@ -1,5 +1,6 @@
 <?php
 
+if (!isset($USERS)) {include "userinfo.php";}
 if (!isset($BLOCKS)) {include "blocksinfo.php";}
 
 $_ = sendrequest("SELECT `id` from `accounts`", true);
@@ -12,6 +13,11 @@ function getBlocksBag($account) {
 		$blocks[]=$BLOCKS[$block["block"]];
 	}
 	return $blocks;
+}
+
+function connectUserToAccount($account) {
+	global $USERINFO;
+	$USERINFO["user"]->account=$account->id;
 }
 
 $ACCOUNTS=[];
