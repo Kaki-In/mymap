@@ -1,5 +1,7 @@
 <?php
 
+if (!isset($DATABASESTATUS)) {include "database.php";}
+
 $_ = sendrequest("SELECT `id` from `maps`", true);
 
 $MAPS=[];

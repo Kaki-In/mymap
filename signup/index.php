@@ -5,11 +5,13 @@ include "init.php";
 <main>
 	<div id="connectdiv">
 		<div>
-			<h3> Connexion au compte </h3>
-			<p>Cherchez-vous à vous <a href="<?php echo $CONF["pathname"]; ?>/signup">créer un compte</a>?</p>
+			<h3> Créer un compte </h3>
+			<p>Cherchez-vous à vous <a href="<?php echo $CONF["pathname"]; ?>/signin">connecter</a>?</p>
 			<label id="connecterror" class="errorinfo"></label>
-			<label>Nom d'utilisateur ou adresse mail : </label><input type="text" id="connectlogin">
-			<label>Mot de passe : </label><input type="password" id="connectpassword">
-			<button onclick="signin();" id="signinbtn"><i class="fa fa-spinner"></i>Se connecter</button>
+			<label>Nom d'utilisateur : </label><input type="text" id="createlogin">
+			<label>Adresse email : </label><input type="email" id="createmail">
+			<label>Mot de passe : </label><input type="password" id="createpassword">
+			<label>Veuillez confirmer le mot de passe : </label><input type="password" id="createpasswordagain">
+			<button onclick="signup();" id="signupbtn"><i class="fa fa-spinner"></i>Créer un compte</button>
 		</div>
 	</div>

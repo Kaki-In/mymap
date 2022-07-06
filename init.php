@@ -1,11 +1,12 @@
 <?php
 
 if (!isset($CONF)) {include "conf.php";}
-if (!isset($DATABASESTATUS)) {include "database.php";}
 if (!isset($MAPS)) {include "mapsinfo.php";}
 if (!isset($USERS)) {include "userinfo.php";}
 if (!isset($BLOCKS)) {include "blocksinfo.php";}
 if (!isset($ACCOUNTS)) {include "accountinfo.php";}
+if (!isset($REQSTATES)) {include "requests.php";}
+if (!isset($DATABASESTATUS)) {include "database.php";}
 
 ?>
 <!DOCTYPE html>
@@ -199,7 +200,7 @@ a {
 	color : #7f6701;
 }
 
-input[type="text"], input[type="password"], input:not([type]) {
+input[type="text"]:not(.nostyle), input[type="password"]:not(.nostyle), input[type="email"]:not(.nostyle), input[type="number"]:not(.nostyle), input:not([type]):not(.nostyle) {
 	border : 1px solid #ffcf03;
 	background : white;
 	outline : none;
@@ -208,7 +209,7 @@ input[type="text"], input[type="password"], input:not([type]) {
 	display : block;
 }
 
-input[type="submit"], button {
+input[type="submit"]:not(.nostyle), button:not(.nostyle) {
 	border : 1px solid #ffcf03;
 	background : #ffcf03;
 	outline : none;
@@ -221,13 +222,13 @@ input[type="submit"], button {
 	font-weight : bold;
 }
 
-input[type="submit"].disabled, button.disabled {
+input[type="submit"].disabled:not(.nostyle), button.disabled:not(.nostyle) {
 	border : 1px solid #ccc;
 	background : #ccc;
 	pointer-events : none;
 }
 
-input[type="submit"]:not(.disabled):hover, button:not(.disabled):hover {
+input[type="submit"]:not(.disabled):not(.nostyle), button:not(.disabled):hover:not(.nostyle) {
 	background : #bf9b02;
 }
 
@@ -309,6 +310,91 @@ input[type="submit"]:not(.disabled):hover, button:not(.disabled):hover {
 	color : red;
 }
 
+div.fullscreendivopt {
+	position : fixed;
+	top : 50%;
+	left : 50%;
+	right : 50%;
+	bottom : 50%;
+	background : #0008;
+	z-index : 150;
+	transition : all 0.75s ease-out;
+	opacity : 0;
+	overflow : hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+div.fullscreendivopt.shown {
+	top : 0;
+	left : 0;
+	right : 0;
+	bottom : 0;
+	opacity : 1;
+}
+
+div.fullscreendivopt > div {
+	display: inline-block;
+	background : white;
+	text-align: center;
+	align-items: center;
+	vertical-align: middle;
+	margin-bottom : 400px;
+	transition : all 1s ease-out;
+}
+
+div.fullscreendivopt div {
+	padding : 20px;
+}
+
+div.fullscreendivopt.shown > div {
+	margin-bottom : 0px;
+}
+
+
+.actionstyle input[type="text"], .actionstyle input[type="password"], .actionstyle input[type="email"], .actionstyle input[type="number"], .actionstyle input:not([type]) {
+	border : 1px solid black;
+	background : white;
+	padding : 10px;
+	display : inline-block;
+	-moz-appearance: textfield;
+}
+
+.actionstyle input[type="submit"], .actionstyle button {
+	border : 1px solid black;
+	background : white;
+	outline : none;
+	padding : 10px;
+	display : inline-block;
+	cursor : pointer;
+}
+
+.actionstyle input[type="submit"].disabled, .actionstyle button.disabled {
+	border : 1px solid #444;
+	background : #eee;
+	pointer-events : none;
+	color : #444;
+}
+
+.actionstyle input[type="submit"]:not(.disabled):hover, .actionstyle button:not(.disabled):hover {
+	background : lightgrey;
+}
+
+.actionstyle .numcode {
+	display : inline-block;
+}
+
+.actionstyle .buttonschoicelist {
+	display : block;
+}
+
+.actionstyle input[type="number"]::-webkit-outer-spin-button,
+.actionstyle input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  background : red;
+}
 
 		</style>
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
@@ -347,9 +433,16 @@ function callScript(scriptname, scriptrequests, onload) {
 }
 
 function signin() {
-	document.getElementById("signinbtn").classList.add("loading");
-	document.getElementById("signinbtn").classList.add("disabled");
-	callScript("signin", {login:document.getElementById("connectlogin").value, password:document.getElementById("connectpassword").value}, signedin);
+	document.getElementById("connecterror").textContent="";
+	if (!document.getElementById("connectlogin").value) {
+		document.getElementById("connecterror").textContent="Le nom d'utilisateur est requis";
+	} else if (!document.getElementById("connectpassword").value) {
+		document.getElementById("connecterror").textContent="Le mot de passe est requis";
+	} else {
+		document.getElementById("signinbtn").classList.add("loading");
+		document.getElementById("signinbtn").classList.add("disabled");
+		callScript("signin", {login:document.getElementById("connectlogin").value, password:document.getElementById("connectpassword").value}, signedin);
+	}
 }
 
 function signedin() {
@@ -362,23 +455,113 @@ function signedin() {
 		document.getElementById("signinbtn").classList.remove("loading");
 		document.getElementById("signinbtn").classList.remove("disabled");
 	}
-	else if (code==200) {
+	else if (code==<?php echo $REQSTATES["LoginConnectionSuccess"]?>) {
 		document.location.href="<?php echo $CONF["pathname"]; ?>/";
 	}
-	else if (code==403) {
+	else if (code==<?php echo $REQSTATES["LoginPleaseVerifyYourMail"]?>) {
+		document.getElementById("connecterror").textContent="Merci de vérifier votre adresse mail";
+	}
+	else if (code==<?php echo $REQSTATES["LoginConnectionFailed"]?>) {
 		document.getElementById("connecterror").textContent="Nom d'utilisateur ou mot de passe incorrect";
 		document.getElementById("signinbtn").classList.remove("loading");
 		document.getElementById("signinbtn").classList.remove("disabled");
 	}
-	else if (code==500) {
+	else if (code==<?php echo $REQSTATES["ServerCrash"]?>) {
 		document.getElementById("connecterror").textContent="Une erreur s'est produite. Veuillez rafraichir la page, si le problème persiste, réessayez plus tard.";
 		document.getElementById("signinbtn").classList.remove("loading");
 	}
-	else if (code==501) {
+	else if (code==<?php echo $REQSTATES["LoginActuallyUnavailable"]?>) {
 		document.getElementById("connecterror").textContent="Le site n'est pas encore prêt à accueillir de nouvelles connexions";
 		document.getElementById("signinbtn").classList.remove("loading");
 	}
+	else if (code==<?php echo $REQSTATES["InvalidRequest"]?>) {
+		document.location.href=document.location.href;
+	}
 }
+
+function signup() {
+	document.getElementById("connecterror").textContent="";
+	if (!document.getElementById("createlogin").value) {
+		document.getElementById("connecterror").textContent="Le nom d'utilisateur est requis";
+	} else if (!document.getElementById("createmail").value) {
+		document.getElementById("connecterror").textContent="L'adresse mail est requise";
+	} else if (!document.getElementById("createpassword").value) {
+		document.getElementById("connecterror").textContent="Le mot de passe est requis";
+	} else if (!document.getElementById("createpasswordagain").value) {
+		document.getElementById("connecterror").textContent="Veuillez confirmer le mot de passe";
+	} else if (!(document.getElementById("createpasswordagain").value==document.getElementById("createpassword").value)) {
+		document.getElementById("connecterror").textContent="Les mots de passe ne correspondent pas";
+	} else {
+		document.getElementById("signupbtn").classList.add("loading");
+		document.getElementById("signupbtn").classList.add("disabled");
+		callScript("signup", {mail:document.getElementById("createmail").value, password:document.getElementById("createpassword").value, username:document.getElementById("createlogin").value}, signedup);
+	}
+}
+
+function signedup() {
+	request=this;
+	console.log(request.response);
+	code = parseInt(request.response.substring(0, 3));
+	info = unescape(request.response.substring(3));
+	if (request.status==500) {
+		document.getElementById("connecterror").textContent="Une erreur s'est produite. Si le problème persiste, réessayez plus tard.";
+		document.getElementById("signupbtn").classList.remove("loading");
+		document.getElementById("signupbtn").classList.remove("disabled");
+	}
+	else if (code==<?php echo $REQSTATES["SignUpCreationWaiting"]?>) {
+		document.getElementById("connecterror").textContent="Merci de vérifier votre adresse mail";
+		verifyMailAdress();
+	}
+	else if (code==<?php echo $REQSTATES["SignUpCreationAlreadyWaiting"]?>) {
+		document.getElementById("connecterror").textContent="Un mail de confirmation vous a déjà été envoyé. Merci de réessayer dans 10 minutes";
+	}
+	else if (code==<?php echo $REQSTATES["SignUpCreationSuccess"]?>) {
+		document.location.href="<?php echo $CONF["pathname"]; ?>/";
+	}
+	else if (code==<?php echo $REQSTATES["SignUpCreationFailed"]?>) {
+		document.getElementById("connecterror").textContent="Nom d'utilisateur ou adresse mail déjà existant(e)";
+		document.getElementById("signupbtn").classList.remove("loading");
+		document.getElementById("signupbtn").classList.remove("disabled");
+	}
+	else if (code==<?php echo $REQSTATES["ServerCrash"]?>) {
+		document.getElementById("connecterror").textContent="Une erreur s'est produite. Veuillez rafraichir la page, si le problème persiste, réessayez plus tard.";
+		document.getElementById("signupbtn").classList.remove("loading");
+	}
+	else if (code==<?php echo $REQSTATES["SignUpActuallyUnavailable"]?>) {
+		document.getElementById("connecterror").textContent="Le site n'est pas encore prêt à accueillir de nouvelles connexions";
+		document.getElementById("signupbtn").classList.remove("loading");
+	}
+	else if (code==<?php echo $REQSTATES["InvalidRequest"]?>) {
+		document.location.href=document.location.href;
+	}
+}
+
+function verifyMailAdress () {
+	openFullscreenDiv(document.getElementById("verifymaildiv"));
+}
+
+function openFullscreenDiv(div) {
+	div.classList.add("shown");
+	div.onopen();
+}
+
+function closeFullscreenDiv(div, state) {
+	div.classList.remove("shown");
+	div.onclose(state);
+}
+
+function init() {
+	document.getElementById("verifymaildiv").onopen=function () {}
+	document.getElementById("verifymaildiv").onclose=function (state)
+	{
+		if (state=='canceled') {
+			document.getElementById("signupbtn").classList.remove("loading");
+			document.getElementById("signupbtn").classList.remove("disabled");
+		}
+	}
+}
+
+setTimeout(init, 100);
 
 		</script>
 	</head>
@@ -401,3 +584,26 @@ if (is_null($USERINFO["user"]->account)) {
 </ul>";
 }
 ?>		</header>
+		<div class="fullscreendivopt actionstyle" id="verifymaildiv">
+			<div>
+				<h3>Vérification de l'adresse mail</h3>
+				<div>
+					Un code de vérification vous a été envoyé par voie email.
+				</div>
+				<label>
+					Code de vérification :
+				</label>
+				<div class='numcode'>
+					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail1">
+					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail2">
+					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail3">
+					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail4">
+					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail5">
+					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail6">
+				</div>
+				<div class='buttonschoicelist'>
+					<button class="nostyle">Valider</button>
+					<button class="nostyle" onclick="closeFullscreenDiv(document.getElementById('verifymaildiv'), 'canceled')">Annuler</button>
+				</div>
+			</div>
+		</div>
