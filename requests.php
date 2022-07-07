@@ -15,6 +15,8 @@ $REQSTATES = [
 	"SignUpCreationSuccess"=>202,
 	"SignUpActuallyUnavailable"=>501,
 
+	"MailVerificationSuccess"=>200,
+	"MailVerificationFailed"=>403,
 ]
 
 ?>

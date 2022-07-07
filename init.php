@@ -7,6 +7,7 @@ if (!isset($BLOCKS)) {include "blocksinfo.php";}
 if (!isset($ACCOUNTS)) {include "accountinfo.php";}
 if (!isset($REQSTATES)) {include "requests.php";}
 if (!isset($DATABASESTATUS)) {include "database.php";}
+if (!isset($MAIL_SCRIPT_ACTIVED)) {include "mailsend.php";};
 
 ?>
 <!DOCTYPE html>
@@ -420,6 +421,36 @@ div.fullscreendivopt.shown > div {
 		<script src="https://kit.fontawesome.com/d5396126f5.js" crossorigin="anonymous"></script>
 		<script>
 
+function init() {
+	document.getElementById("verifymaildiv").onopen=function () {}
+	document.getElementById("verifymaildiv").onclose=function (state)
+	{
+		if (state=='canceled') {
+			document.getElementById("signupbtn").classList.remove("loading");
+			document.getElementById("signupbtn").classList.remove("disabled");
+		}
+		else if (state=='accepted') {
+			callScript("verifymail", {mail:document.getElementById("createmail").value, code:parseInt(document.getElementById("mail1").value)+parseInt(document.getElementById("mail2").value)+parseInt(document.getElementById("mail3").value)+parseInt(document.getElementById("mail4").value)+parseInt(document.getElementById("mail5").value)+parseInt(document.getElementById("mail6").value)}, onVerifyMailReceived);
+		}
+	}
+	var elements = document.getElementsByClassName("verifycodenum");
+	for (var i=0;i<elements.length;i++) {
+		elements[i].onkeyup=function onNumberVerifycodeChange(event) {
+			if (parseInt(event.key)!=NaN) {
+				this.value = event.key;
+				if (this.nextSibling.nextSibling) {this.nextSibling.nextSibling.focus();}
+				else {
+					if (this.parentElement.id=="mailcode") {document.getElementById("btnmailcode").onclick();}
+				}
+			} else {
+				this.value="";
+			}
+		}
+	}
+}
+
+setTimeout(init, 100);
+
 function callScript(scriptname, scriptrequests, onload) {
 	var script = new XMLHttpRequest();
 	var formData = new FormData();
@@ -481,6 +512,7 @@ function signedin() {
 
 function signup() {
 	document.getElementById("connecterror").textContent="";
+	document.getElementById("verifymaildiv").mail=document.getElementById("createmail").value;
 	if (!document.getElementById("createlogin").value) {
 		document.getElementById("connecterror").textContent="Le nom d'utilisateur est requis";
 	} else if (!document.getElementById("createmail").value) {
@@ -550,18 +582,11 @@ function closeFullscreenDiv(div, state) {
 	div.onclose(state);
 }
 
-function init() {
-	document.getElementById("verifymaildiv").onopen=function () {}
-	document.getElementById("verifymaildiv").onclose=function (state)
-	{
-		if (state=='canceled') {
-			document.getElementById("signupbtn").classList.remove("loading");
-			document.getElementById("signupbtn").classList.remove("disabled");
-		}
-	}
-}
+function onVerifyMailReceived() {
+	document.getElementById("signupbtn").classList.remove("loading");
+	document.getElementById("signupbtn").classList.remove("disabled");
 
-setTimeout(init, 100);
+}
 
 		</script>
 	</head>
@@ -593,7 +618,7 @@ if (is_null($USERINFO["user"]->account)) {
 				<label>
 					Code de vérification :
 				</label>
-				<div class='numcode'>
+				<div class='numcode' id="mailcode">
 					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail1">
 					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail2">
 					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail3">
@@ -602,7 +627,7 @@ if (is_null($USERINFO["user"]->account)) {
 					<input type="number" class="verifycodenum nostyle" min="0" max="9" value="0" id="mail6">
 				</div>
 				<div class='buttonschoicelist'>
-					<button class="nostyle">Valider</button>
+					<button class="nostyle" onclick="closeFullscreenDiv(document.getElementById('verifymaildiv'), 'accepted')" id="btnmailcode">Valider</button>
 					<button class="nostyle" onclick="closeFullscreenDiv(document.getElementById('verifymaildiv'), 'canceled')">Annuler</button>
 				</div>
 			</div>
