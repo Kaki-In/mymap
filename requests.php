@@ -17,6 +17,7 @@ $REQSTATES = [
 
 	"MailVerificationSuccess"=>200,
 	"MailVerificationFailed"=>403,
+	"MailVerificationUnavailable"=>501,
 ]
 
 ?>

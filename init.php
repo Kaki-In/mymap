@@ -4,8 +4,8 @@ if (!isset($CONF)) {include "conf.php";}
 if (!isset($MAPS)) {include "mapsinfo.php";}
 if (!isset($USERS)) {include "userinfo.php";}
 if (!isset($BLOCKS)) {include "blocksinfo.php";}
-if (!isset($ACCOUNTS)) {include "accountinfo.php";}
 if (!isset($REQSTATES)) {include "requests.php";}
+if (!isset($ACCOUNTS)) {include "accountinfo.php";}
 if (!isset($DATABASESTATUS)) {include "database.php";}
 if (!isset($MAIL_SCRIPT_ACTIVED)) {include "mailsend.php";};
 
@@ -24,6 +24,10 @@ main {
 	left : 0;
 	overflow-y : auto;
 	overflow-wrap: break-word;
+}
+
+h3 {
+	font-size : 30px;
 }
 
 header {
@@ -397,6 +401,35 @@ div.fullscreendivopt.shown > div {
   background : red;
 }
 
+div.blocklist {
+	position : relative;
+	display : flex;
+	margin : 10px;
+}
+
+div.blocklist a {
+	display : inline-block;
+	width : 150px;
+	overflow : hidden;
+	border-radius : 20px 20px 0px 0px;
+	border : 5px solid black;
+	margin : 10px;
+	text-decoration : none;
+	transition : all 0.1s ease-out;
+}
+
+div.blocklist p {
+	width : 100%;
+	text-align : center;
+	color : black;
+	font-size : 20px;
+	font-weight : bold;
+}
+
+div.blocklist a:hover {
+	opacity : 0.5;
+}
+
 		</style>
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		<meta name="generator" content="Geany 1.32/ssh+nano" />
@@ -430,21 +463,19 @@ function init() {
 			document.getElementById("signupbtn").classList.remove("disabled");
 		}
 		else if (state=='accepted') {
-			callScript("verifymail", {mail:document.getElementById("createmail").value, code:parseInt(document.getElementById("mail1").value)+parseInt(document.getElementById("mail2").value)+parseInt(document.getElementById("mail3").value)+parseInt(document.getElementById("mail4").value)+parseInt(document.getElementById("mail5").value)+parseInt(document.getElementById("mail6").value)}, onVerifyMailReceived);
+			callScript("verifymail", {login:this.login, password:this.password, code:document.getElementById("mail1").value+document.getElementById("mail2").value+document.getElementById("mail3").value+document.getElementById("mail4").value+document.getElementById("mail5").value+document.getElementById("mail6").value}, onVerifyMailReceived);
 		}
 	}
 	var elements = document.getElementsByClassName("verifycodenum");
 	for (var i=0;i<elements.length;i++) {
 		elements[i].onkeyup=function onNumberVerifycodeChange(event) {
-			if (parseInt(event.key)!=NaN) {
-				this.value = event.key;
+			if (!Number.isNaN(parseInt(event.key))) {
+				this.value=event.key;
 				if (this.nextSibling.nextSibling) {this.nextSibling.nextSibling.focus();}
 				else {
 					if (this.parentElement.id=="mailcode") {document.getElementById("btnmailcode").onclick();}
 				}
-			} else {
-				this.value="";
-			}
+			} else {this.value="";}
 		}
 	}
 }
@@ -491,6 +522,9 @@ function signedin() {
 	}
 	else if (code==<?php echo $REQSTATES["LoginPleaseVerifyYourMail"]?>) {
 		document.getElementById("connecterror").textContent="Merci de vérifier votre adresse mail";
+		document.getElementById("verifymaildiv").login=document.getElementById("connectlogin").value;
+		document.getElementById("verifymaildiv").password=document.getElementById("connectpassword").value;
+		verifyMailAdress();
 	}
 	else if (code==<?php echo $REQSTATES["LoginConnectionFailed"]?>) {
 		document.getElementById("connecterror").textContent="Nom d'utilisateur ou mot de passe incorrect";
@@ -542,10 +576,15 @@ function signedup() {
 	}
 	else if (code==<?php echo $REQSTATES["SignUpCreationWaiting"]?>) {
 		document.getElementById("connecterror").textContent="Merci de vérifier votre adresse mail";
+		document.getElementById("verifymaildiv").login=document.getElementById("createlogin").value;
+		document.getElementById("verifymaildiv").password=document.getElementById("createpassword").value;
 		verifyMailAdress();
 	}
 	else if (code==<?php echo $REQSTATES["SignUpCreationAlreadyWaiting"]?>) {
-		document.getElementById("connecterror").textContent="Un mail de confirmation vous a déjà été envoyé. Merci de réessayer dans 10 minutes";
+		document.getElementById("connecterror").textContent="Un mail de confirmation vous a été renvoyé.";
+		document.getElementById("verifymaildiv").login=document.getElementById("createlogin").value;
+		document.getElementById("verifymaildiv").password=document.getElementById("createpassword").value;
+		verifyMailAdress();
 	}
 	else if (code==<?php echo $REQSTATES["SignUpCreationSuccess"]?>) {
 		document.location.href="<?php echo $CONF["pathname"]; ?>/";
@@ -583,9 +622,35 @@ function closeFullscreenDiv(div, state) {
 }
 
 function onVerifyMailReceived() {
-	document.getElementById("signupbtn").classList.remove("loading");
-	document.getElementById("signupbtn").classList.remove("disabled");
-
+	try {
+		document.getElementById("signupbtn").classList.remove("loading");
+		document.getElementById("signupbtn").classList.remove("disabled");
+	} catch {
+		document.getElementById("signinbtn").classList.remove("loading");
+		document.getElementById("signinbtn").classList.remove("disabled");
+	}
+	request=this;
+	console.log(request.response);
+	code = parseInt(request.response.substring(0, 3));
+	info = unescape(request.response.substring(3));
+	if (request.status==500) {
+		document.getElementById("connecterror").textContent="Une erreur s'est produite. Si le problème persiste, réessayez plus tard.";
+	}
+	else if (code==<?php echo $REQSTATES["MailVerificationSuccess"]?>) {
+		document.getElementById("connecterror").textContent="Vous pouvez à présent vous connecter.";
+	}
+	else if (code==<?php echo $REQSTATES["MailVerificationFailed"]?>) {
+		document.getElementById("connecterror").textContent="La vérification à échoué.";
+	}
+	else if (code==<?php echo $REQSTATES["ServerCrash"]?>) {
+		document.getElementById("connecterror").textContent="Une erreur s'est produite. Veuillez rafraichir la page, si le problème persiste, réessayez plus tard.";
+	}
+	else if (code==<?php echo $REQSTATES["MailVerificationUnavailable"]?>) {
+		document.getElementById("connecterror").textContent="Le site n'est pas encore prêt à accueillir de nouvelles connexions";
+	}
+	else if (code==<?php echo $REQSTATES["InvalidRequest"]?>) {
+		document.getElementById("connecterror").textContent="Une erreur est intervenue.";
+	}
 }
 
 		</script>

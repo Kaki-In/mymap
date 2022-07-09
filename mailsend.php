@@ -12,6 +12,14 @@ require 'vendor/autoload.php';
 
 $MAIL_SCRIPT_ACTIVED = true;
 
+function getRandomizedCode($length) {
+	$code='';
+	for ($i=0;$i<$length;$i++) {
+		$code.=['0','1','2','3','4','5','6','7','8','9'][rand(0,9)];
+	}
+	return $code;
+}
+
 function sendMailTo($adress,$subject,$body){
 	global $CONF;
 
@@ -38,5 +46,28 @@ function sendMailTo($adress,$subject,$body){
 	} else {
 		return true;
 	}
+}
+
+function getVerificationCode($mail) {
+	$code = getRandomizedCode(6);
+	$body = "
+<html>
+	<head>
+		<style>
+
+.emphased, h1 {
+	color : #ffcf03;
+	font-weight : bold;
+}
+
+		</style>
+	</head>
+	<body>
+		<h1>Code de validation </h1>
+		<p>Votre code de validation : <text class='emphased'>$code</text></p>
+	</body>
+</html>";
+	sendMailTo($mail, "Code de validation pour MyMap", $body);
+	return $code;
 }
 ?>
