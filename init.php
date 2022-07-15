@@ -53,7 +53,7 @@ header a {
 	color : black;
 	font-weight : bold;
 	font-size : 20px;
-	border-radius : 10px;
+	border-radius : <?php echo "10px"; ?>;
 	text-align : middle;
 	transition : 0.25s all ease-out;
 }
@@ -401,33 +401,80 @@ div.fullscreendivopt.shown > div {
   background : red;
 }
 
+div.blockdiv {
+	background : #f0f0f0;
+	padding : 20px;
+	margin-top : 50px;
+}
+
 div.blocklist {
 	position : relative;
-	display : flex;
-	margin : 10px;
+	overflow-x : auto;
+	display : inline-block;
+	white-space : nowrap;
+	width : 100%;
+}
+
+div.blockdiv h3 {
+	width : 100%;
+	margin : 0;
+}
+
+div.blockdiv h3 i.fa:before {
+	color : #bf9b02;
 }
 
 div.blocklist a {
 	display : inline-block;
 	width : 150px;
 	overflow : hidden;
-	border-radius : 20px 20px 0px 0px;
+	border-radius : 25px 25px 10px 10px;
 	border : 5px solid black;
 	margin : 10px;
 	text-decoration : none;
 	transition : all 0.1s ease-out;
+	background : white;
+	white-spaces : no-wrap;
+}
+
+div.blocklist a img {
+	border-radius : 0px;
+	border-bottom : 5px solid black
 }
 
 div.blocklist p {
-	width : 100%;
 	text-align : center;
 	color : black;
 	font-size : 20px;
 	font-weight : bold;
+	word-wrap: break-word;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow : hidden;
+	margin-right : 10px;
+	margin-left : 10px;
 }
 
 div.blocklist a:hover {
-	opacity : 0.5;
+	opacity : 0.75;
+}
+
+div.blocklist i.fa:before {
+	position : relative;
+	width : 100px;
+	top : 0;
+	font-size : 100px;
+	vertical-align : middle;
+	color : grey;
+	padding : 25px;
+	display : block;
+}
+
+div.blocklist i.fa {
+	width : 100%;
+	height : 160px;
+	margin : 0;
+	text-align : center;
 }
 
 		</style>
@@ -673,7 +720,8 @@ if (is_null($USERINFO["user"]->account)) {
 	<li><a href='{$CONF["pathname"]}/'><i class='fa fa-user'></i>".""."</a></li>
 </ul>";
 }
-?>		</header>
+?>
+		</header>
 		<div class="fullscreendivopt actionstyle" id="verifymaildiv">
 			<div>
 				<h3>Vérification de l'adresse mail</h3>

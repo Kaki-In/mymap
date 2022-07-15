@@ -2,6 +2,7 @@
 set_include_path("../:.:/usr/share/php");
 include "init.php";
 
+echo "<main>";
 if (isset($_REQUEST["mapid"])) {
 	$f = false;
 	foreach($MAPS as $map) {
